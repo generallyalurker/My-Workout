@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Workout">
+<meta name="theme-color" content="#0c0c0f">
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<title>Leslie's Workout</title>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400;1,700&family=DM+Mono:wght@300;400;500&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0c0f;--surface:#16161c;--surface2:#1e1e26;--border:#2a2a35;--border2:#383844;--text:#e4e2dc;--text-dim:#8a8880;--text-faint:#44444e;--gold:#c9a96e;--teal:#6eb8a9;--lav:#9b8ec4;--rose:#c47a7a;--sa:#a8c4a0;--rest:#6e8ec8;--done:#7ab87a;--r:12px;--rl:20px;--st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;font-weight:300;min-height:100vh;min-height:-webkit-fill-available;display:flex;flex-direction:column;align-items:center;padding-top:var(--st);padding-bottom:var(--sb);overscroll-behavior:none}
+.screen{display:none;width:100%;max-width:480px;padding:0 18px 60px;flex-direction:column}
+.screen.active{display:flex}
+.app-header{width:100%;max-width:480px;padding:24px 18px 0;display:flex;justify-content:space-between;align-items:flex-end}
+.hl{display:flex;flex-direction:column;gap:2px}
+.at{font-family:'Merriweather',serif;font-size:24px;font-weight:700}
+.as{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim)}
+.mute{width:38px;height:38px;border-radius:50%;border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;flex-shrink:0}
+.mute.muted{border-color:var(--rose)}
+#homeScreen{gap:12px;padding-top:18px}
+.wg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ct{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:18px 14px 16px;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden}
+.ct:active{transform:scale(.97);opacity:.85}
+.ctb{position:absolute;top:0;left:0;right:0;height:2px}
+.ce{font-size:32px;line-height:1}
+.cn{font-family:'Merriweather',serif;font-size:16px;font-weight:700;color:var(--text);line-height:1.1}
+.cd{font-size:12px;color:var(--text-dim);line-height:1.4}
+.stile{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:18px 20px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden}
+.stile:active{transform:scale(.98);opacity:.85}
+.se{font-size:36px;line-height:1;flex-shrink:0}
+.sr{display:flex;flex-direction:column;gap:3px}
+.sn{font-family:'Merriweather',serif;font-size:18px;font-weight:700}
+.sd{font-size:13px;color:var(--text-dim)}
+.supbtn{width:100%;padding:15px;border-radius:var(--r);border:1px dashed var(--border2);background:none;color:var(--text-dim);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.supbtn:active{border-color:var(--gold);color:var(--gold)}
+#balletSubScreen,#diffScreen,#stretchDurScreen,#energyScreen{gap:16px;padding-top:18px}
+.back{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 0}
+.ba{font-size:18px;color:var(--text-dim)}
+.bl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim)}
+.sh{font-family:'Merriweather',serif;font-size:24px;font-weight:700}
+.ss{font-size:14px;color:var(--text-dim);line-height:1.6}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stl{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:20px 16px;display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden}
+.stl:active{transform:scale(.97)}
+.stln{font-family:'Merriweather',serif;font-size:16px;font-weight:700}
+.stld{font-size:11px;color:var(--text-dim);line-height:1.35}
+.ts{display:flex;flex-direction:column;gap:8px}
+.tt{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .18s}
+.tt:active{background:var(--surface2)}
+.tl{display:flex;flex-direction:column;gap:3px}
+.tn{font-family:'Merriweather',serif;font-size:16px;font-weight:700}
+.td{font-size:12px;color:var(--text-dim)}
+.tar{color:var(--text-faint);font-size:16px}
+.ds{display:flex;flex-direction:column;gap:8px}
+.dt{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .18s}
+.dt:active{background:var(--surface2)}
+.dl{display:flex;flex-direction:column;gap:2px}
+.dn{font-family:'Merriweather',serif;font-size:30px;font-weight:700;color:var(--sa);line-height:1}
+.du{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim)}
+.dd{font-size:13px;color:var(--text-dim);text-align:right;line-height:1.5;max-width:55%}
+.eg{display:flex;flex-direction:column;gap:10px}
+.et{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .18s}
+.et:active{background:var(--surface2);border-color:var(--gold)}
+.el{display:flex;flex-direction:column;gap:3px}
+.en{font-family:'Merriweather',serif;font-size:18px;font-weight:700}
+.ed{font-size:13px;color:var(--text-dim)}
+.etr{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-faint)}
+#guidedScreen{gap:12px;padding-top:14px}
+.gtb{display:flex;justify-content:space-between;align-items:center}
+.gtag{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;padding:4px 10px;border-radius:20px;border:1px solid var(--border);color:var(--text-dim)}
+.gtl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-faint)}
+.ps{display:flex;gap:3px}
+.pip{flex:1;height:3px;border-radius:2px;background:var(--border);transition:background .3s}
+.pip.done{background:var(--done)}
+.pip.active{background:var(--gold)}
+.pip.rest{background:var(--rest)}
+.ec{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:22px 18px 18px;display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden}
+.ecb{position:absolute;top:0;left:0;right:0;height:2px;background:var(--gold);transition:background .3s}
+.ec.resting .ecb{background:var(--rest)}
+.ec.sm .ecb{background:var(--sa)}
+.etr2{display:flex;justify-content:space-between;align-items:center}
+.enum{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--text-faint);text-transform:uppercase}
+.edur{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--gold)}
+.ec.sm .edur{color:var(--sa)}
+.ename{font-family:'Merriweather',serif;font-size:22px;font-weight:700;line-height:1.2;color:var(--text)}
+.ename.r{color:var(--rest);font-style:italic;font-size:20px}
+.tw{display:flex;justify-content:center;padding:4px 0}
+.tc{position:relative;display:inline-flex;align-items:center;justify-content:center}
+.tsvg{transform:rotate(-90deg)}
+.ttrack{fill:none;stroke:var(--border2);stroke-width:5}
+.tring{fill:none;stroke:var(--gold);stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset .25s linear,stroke .3s}
+.ec.sm .tring{stroke:var(--sa)}
+.tcenter{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
+.tnum{font-family:'Merriweather',serif;font-size:52px;font-weight:700;line-height:1;color:var(--text)}
+.tlbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-top:2px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.pulsing .tring{animation:pulse 1.6s ease-in-out infinite}
+.cr{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.ct2{font-size:14px;line-height:1.7;color:var(--text);flex:1}
+.ib{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin-top:1px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-dim)}
+.ib.on{border-color:var(--gold);color:var(--gold)}
+.xc{background:var(--surface2);border-radius:var(--r);padding:12px 14px;display:none;flex-direction:column;gap:10px}
+.xc.show{display:flex}
+.xs{display:flex;flex-direction:column;gap:3px}
+.xl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-faint)}
+.xb{font-size:13px;line-height:1.7;color:var(--text-dim)}
+.wr{border-top:1px solid var(--border);padding-top:10px}
+.wl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-faint);display:block;margin-bottom:3px}
+.wt{font-size:13px;line-height:1.6;color:var(--text-dim);font-style:italic}
+.ctrls{display:flex;gap:8px}
+.btn{flex:1;padding:13px 8px;border-radius:var(--r);border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .15s}
+.btn:active{opacity:.7;transform:scale(.98)}
+.bp{background:var(--gold);color:#1a1208;border-color:var(--gold);font-weight:500}
+.bst{background:var(--sa);color:#0e1a0e;border-color:var(--sa);font-weight:500}
+.bsm{flex:none;padding:13px 12px}
+.bg{background:none;color:var(--text-dim)}
+.dc{background:var(--surface);border:1px solid var(--done);border-radius:var(--rl);padding:32px 20px;text-align:center;display:none;flex-direction:column;gap:10px;align-items:center}
+.dc.show{display:flex}
+.dm{font-size:34px}
+.dt2{font-family:'Merriweather',serif;font-size:24px;font-weight:700;color:var(--done)}
+.dsub{font-size:14px;color:var(--text-dim);line-height:1.6}
+.da{display:flex;gap:8px;width:100%;margin-top:8px}
+.pb{display:inline-block;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--sa);border:1px solid var(--sa);border-radius:20px;padding:2px 8px;margin-bottom:4px}
+</style>
+</head>
+<body>
+<div class="app-header">
+  <div class="hl"><div class="as">Personal Training</div><div class="at">Leslie's Workout</div></div>
+  <button class="mute" id="muteBtn" onclick="toggleMute()">🔔</button>
+</div>
+
+<div id="homeScreen" class="screen active">
+  <div class="wg">
+    <div class="ct" onclick="goTo('balletSubScreen')"><div class="ctb" style="background:var(--lav)"></div><div class="ce">🩰</div><div class="cn">Ballet</div><div class="cd">Barre &amp; center work · Pointe</div></div>
+    <div class="ct" onclick="startCat('body')"><div class="ctb" style="background:var(--teal)"></div><div class="ce">🤸‍♀️</div><div class="cn">Bodyweight</div><div class="cd">No equipment needed</div></div>
+    <div class="ct" onclick="startCat('skate')"><div class="ctb" style="background:var(--rose)"></div><div class="ce">⛸️</div><div class="cn">Skating</div><div class="cd">Off-ice drills</div></div>
+    <div class="ct" onclick="startCat('foot')"><div class="ctb" style="background:var(--gold)"></div><div class="ce">🦶🏻</div><div class="cn">Foot</div><div class="cd">Strength · Mobility · Rehab</div></div>
+  </div>
+  <div class="stile" onclick="goTo('stretchDurScreen')"><div class="ctb" style="background:var(--sa);border-radius:var(--rl) var(--rl) 0 0"></div><div class="se">🧘‍♀️</div><div class="sr"><div class="sn">Stretching</div><div class="sd">Desk recovery · Ballet · Skating · Foot</div></div></div>
+  <button class="supbtn" onclick="goTo('energyScreen')">✦ &nbsp; Surprise Me</button>
+</div>
+
+<div id="balletSubScreen" class="screen">
+  <div class="back" onclick="goTo('homeScreen')"><span class="ba">←</span><span class="bl">Back</span></div>
+  <div class="sh">Ballet</div>
+  <div class="sg">
+    <div class="stl" onclick="startCat('ballet')"><div class="ctb" style="background:var(--lav)"></div><div class="ce" style="font-size:28px">🩰</div><div class="stln">Standard</div><div class="stld">Barre &amp; center work, alignment, balance</div></div>
+    <div class="stl" onclick="startCat('pointe')"><div class="ctb" style="background:var(--rose)"></div><div class="ce" style="font-size:28px">🎯</div><div class="stln">Pointe Readiness</div><div class="stld">Assessment and preparation</div></div>
+  </div>
+</div>
+
+<div id="diffScreen" class="screen">
+  <div class="back" id="diffBack"><span class="ba">←</span><span class="bl">Back</span></div>
+  <div class="sh" id="diffH">Difficulty</div>
+  <div class="ss" id="diffS"></div>
+  <div class="ts">
+    <div class="tt" onclick="beginWorkout('easy')"><div class="tl"><div class="tn">Easy</div><div class="td">Low demand · Good for any day</div></div><div class="tar">→</div></div>
+    <div class="tt" onclick="beginWorkout('moderate')"><div class="tl"><div class="tn">Moderate</div><div class="td">Standard session · Mix of challenge</div></div><div class="tar">→</div></div>
+    <div class="tt" onclick="beginWorkout('difficult')"><div class="tl"><div class="tn">Difficult</div><div class="td">Feeling strong · Full challenge</div></div><div class="tar">→</div></div>
+  </div>
+</div>
+
+<div id="stretchDurScreen" class="screen">
+  <div class="back" onclick="goTo('homeScreen')"><span class="ba">←</span><span class="bl">Back</span></div>
+  <div class="sh">Stretching</div>
+  <div class="ss">Desk recovery, ballet, skating, and foot targeted. All holds 30 seconds max per side.</div>
+  <div class="ds">
+    <div class="dt" onclick="beginStretch(5)"><div class="dl"><div class="dn">5</div><div class="du">minutes</div></div><div class="dd">Standing only · Office-friendly · Essential hits</div></div>
+    <div class="dt" onclick="beginStretch(10)"><div class="dl"><div class="dn">10</div><div class="du">minutes</div></div><div class="dd">Full sequence · Floor work included</div></div>
+    <div class="dt" onclick="beginStretch(15)"><div class="dl"><div class="dn">15</div><div class="du">minutes</div></div><div class="dd">Extended · Complete skating and ballet work</div></div>
+  </div>
+</div>
+
+<div id="energyScreen" class="screen">
+  <div class="back" onclick="goTo('homeScreen')"><span class="ba">←</span><span class="bl">Back</span></div>
+  <div class="sh">How are you feeling?</div>
+  <div class="ss">Your energy picks the difficulty. Category will be a surprise.</div>
+  <div class="eg">
+    <div class="et" onclick="doSurprise('easy')"><div class="el"><div class="en">Low Energy</div><div class="ed">Moving is enough today</div></div><div class="etr">Easy</div></div>
+    <div class="et" onclick="doSurprise('moderate')"><div class="el"><div class="en">Feeling Good</div><div class="ed">Ready for a real session</div></div><div class="etr">Moderate</div></div>
+    <div class="et" onclick="doSurprise('difficult')"><div class="el"><div class="en">Feeling Strong</div><div class="ed">Bring the challenge</div></div><div class="etr">Difficult</div></div>
+  </div>
+</div>
+
+<div id="guidedScreen" class="screen">
+  <div class="gtb"><div class="gtag" id="gTag">Ballet</div><div class="gtl" id="gTier">Easy</div></div>
+  <div class="ps" id="pStrip"></div>
+  <div class="ec" id="exCard">
+    <div class="ecb"></div>
+    <div class="etr2"><div class="enum" id="eNum">Exercise 1 of 6</div><div class="edur" id="eDur"></div></div>
+    <div class="ename" id="eName"></div>
+    <div class="tw">
+      <div class="tc" id="tCont">
+        <svg class="tsvg" width="132" height="132" viewBox="0 0 132 132"><circle class="ttrack" cx="66" cy="66" r="56"/><circle class="tring" id="tRing" cx="66" cy="66" r="56" stroke-dasharray="352" stroke-dashoffset="0"/></svg>
+        <div class="tcenter"><div class="tnum" id="tNum">30</div><div class="tlbl" id="tLbl">seconds</div></div>
+      </div>
+    </div>
+    <div class="cr"><div class="ct2" id="eCue"></div><button class="ib" id="iBtn" onclick="toggleInfo()">ⓘ</button></div>
+    <div class="xc" id="xCue">
+      <div class="xs"><div class="xl">How to get there</div><div class="xb" id="xSetup"></div></div>
+      <div class="xs"><div class="xl">What you should feel</div><div class="xb" id="xFeel"></div></div>
+    </div>
+    <div class="wr" id="wRow"><span class="wl">Watch for</span><div class="wt" id="wText"></div></div>
+  </div>
+  <div class="ctrls" id="gCtrls">
+    <button class="btn bsm bg" id="prevBtn" onclick="prevEx()">← Back</button>
+    <button class="btn bp" id="mainBtn" onclick="toggleTimer()">Start</button>
+    <button class="btn bsm bg" id="skipBtn" onclick="nextEx()">Skip →</button>
+  </div>
+  <div class="dc" id="doneCard">
+    <div class="dm">✦</div>
+    <div class="dt2">Complete</div>
+    <div class="dsub" id="dSub"></div>
+    <div class="da"><button class="btn bg" onclick="repeatWorkout()">Repeat</button><button class="btn bp" onclick="goTo('homeScreen')">Done →</button></div>
+  </div>
+</div>
+
+<script>
+let audioCtx=null,muted=false;
+function getACtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();return audioCtx;}
+function playTick(){if(muted)return;try{const c=getACtx(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=800;o.type='sine';g.gain.setValueAtTime(.07,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.05);o.start(c.currentTime);o.stop(c.currentTime+.05);}catch(e){}}
+function playChime(){if(muted)return;try{const c=getACtx();[523,659,784].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';const t=c.currentTime+i*.13;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.14,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+.45);o.start(t);o.stop(t+.45);});}catch(e){}}
+function toggleMute(){muted=!muted;const b=document.getElementById('muteBtn');b.textContent=muted?'🔕':'🔔';b.classList.toggle('muted',muted);}
+
+function goTo(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+let curCat=null;
+function startCat(cat){
+  curCat=cat;
+  const names={ballet:'Ballet',body:'Bodyweight',skate:'Skating',foot:'Foot',pointe:'Pointe Readiness'};
+  const descs={ballet:'Barre and center work. Alignment → range → balance.',body:'No equipment. Bilateral → unilateral → coordination.',skate:'Off-ice only. Posture → rotation → endurance.',foot:'Barefoot preferred. Awareness → activation → load.',pointe:'Assessment and preparation for pointe work.'};
+  document.getElementById('diffH').textContent=names[cat]||cat;
+  document.getElementById('diffS').textContent=descs[cat]||'';
+  document.getElementById('diffBack').onclick=()=>goTo(cat==='ballet'||cat==='pointe'?'balletSubScreen':'homeScreen');
+  goTo('diffScreen');
+}
+function beginWorkout(tier){const e=getEx(curCat,tier);if(!e||!e.length)return;startSess(e,curCat,tier);}
+function beginStretch(m){startSess(getSEx(m),'stretch',m+' min');}
+function doSurprise(tier){const cats=['ballet','body','skate','foot'];curCat=cats[Math.floor(Math.random()*cats.length)];beginWorkout(tier);}
+
+const CIRC=352,REST=5;
+let S={},tInt=null,iOpen=false;
+function startSess(exercises,cat,tier){
+  clearInterval(tInt);tInt=null;
+  S={exercises,cat,tier,idx:0,resting:false,running:false,done:false,timeLeft:0,totalTime:0};
+  iOpen=false;
+  const isS=cat==='stretch';
+  document.getElementById('gTag').textContent=isS?'Stretching':cLabel(cat);
+  document.getElementById('gTier').textContent=typeof tier==='number'?tier+' min':cap(tier);
+  buildPips(exercises.length);
+  document.getElementById('doneCard').classList.remove('show');
+  document.getElementById('exCard').style.display='';
+  document.getElementById('gCtrls').style.display='';
+  loadEx(0);
+  goTo('guidedScreen');
+}
+function cLabel(c){return{ballet:'Ballet',body:'Bodyweight',skate:'Skating',foot:'Foot',pointe:'Pointe Readiness',stretch:'Stretching'}[c]||c;}
+function cap(s){return s?s.charAt(0).toUpperCase()+s.slice(1):'';}
+function buildPips(n){const s=document.getElementById('pStrip');s.innerHTML='';for(let i=0;i<n;i++){const p=document.createElement('div');p.className='pip';p.id='p'+i;s.appendChild(p);}}
+function updPips(){S.exercises.forEach((_,i)=>{const p=document.getElementById('p'+i);if(!p)return;p.className='pip';if(i<S.idx)p.classList.add('done');else if(i===S.idx&&S.resting)p.classList.add('rest');else if(i===S.idx)p.classList.add('active');});}
+function loadEx(idx){
+  const ex=S.exercises[idx],isS=S.cat==='stretch';
+  const card=document.getElementById('exCard');
+  card.className='ec'+(isS?' sm':'');
+  document.getElementById('eNum').textContent='Exercise '+(idx+1)+' of '+S.exercises.length;
+  document.getElementById('eName').className='ename';
+  document.getElementById('eName').textContent=ex.name;
+  document.getElementById('eDur').textContent=fmtD(ex.dur);
+  const ct=document.getElementById('eCue');
+  if(ex.passive){ct.innerHTML='<span class="pb">Passive Release</span><br>'+ex.cue;}else{ct.textContent=ex.cue;}
+  document.getElementById('xSetup').textContent=ex.setup||'';
+  document.getElementById('xFeel').textContent=ex.feel||'';
+  const hasX=!!(ex.setup||ex.feel);
+  document.getElementById('iBtn').style.display=hasX?'':'none';
+  if(iOpen){iOpen=false;document.getElementById('xCue').classList.remove('show');document.getElementById('iBtn').classList.remove('on');}
+  const wr=document.getElementById('wRow');
+  if(ex.watch){wr.style.display='';document.getElementById('wText').textContent=ex.watch;}else{wr.style.display='none';}
+  document.getElementById('tRing').style.stroke=isS?'var(--sa)':'var(--gold)';
+  setT(ex.dur);
+  const mb=document.getElementById('mainBtn');
+  mb.textContent='Start';mb.className='btn '+(isS?'bst':'bp');
+  document.getElementById('tCont').classList.remove('pulsing');
+  S.running=false;updPips();updNav();
+}
+function loadRest(nx){
+  const card=document.getElementById('exCard');card.className='ec resting';
+  document.getElementById('eNum').textContent='Rest';
+  document.getElementById('eName').className='ename r';document.getElementById('eName').textContent='Rest';
+  document.getElementById('eDur').textContent='5 sec';
+  document.getElementById('eCue').textContent='Next: '+nx.name;
+  document.getElementById('wRow').style.display='none';document.getElementById('iBtn').style.display='none';document.getElementById('xCue').classList.remove('show');
+  document.getElementById('tRing').style.stroke='var(--rest)';
+  setT(REST);updPips();
+}
+function setT(s){S.timeLeft=s;S.totalTime=s;document.getElementById('tNum').textContent=s;document.getElementById('tLbl').textContent=s===1?'second':'seconds';document.getElementById('tRing').style.strokeDashoffset=0;}
+function fmtD(s){if(s<60)return s+' sec';const m=Math.floor(s/60),r=s%60;return r?m+'m '+r+'s':m+' min';}
+function toggleTimer(){if(S.done){goTo('homeScreen');return;}getACtx();S.running?pauseT():startT();}
+function startT(){S.running=true;document.getElementById('mainBtn').textContent='Pause';document.getElementById('tCont').classList.add('pulsing');tInt=setInterval(tick,1000);}
+function pauseT(){clearInterval(tInt);tInt=null;S.running=false;document.getElementById('mainBtn').textContent='Resume';document.getElementById('tCont').classList.remove('pulsing');}
+function tick(){
+  playTick();S.timeLeft--;
+  document.getElementById('tNum').textContent=S.timeLeft;
+  document.getElementById('tLbl').textContent=S.timeLeft===1?'second':'seconds';
+  document.getElementById('tRing').style.strokeDashoffset=CIRC*(1-S.timeLeft/S.totalTime);
+  if(S.timeLeft<=0){clearInterval(tInt);tInt=null;S.running=false;document.getElementById('tCont').classList.remove('pulsing');playChime();if(S.resting){S.resting=false;loadEx(S.idx);}else advance();}
+}
+function advance(){if(S.idx<S.exercises.length-1){S.idx++;S.resting=true;loadRest(S.exercises[S.idx]);setT(REST);startT();}else showDone();}
+function nextEx(){if(S.done)return;clearInterval(tInt);tInt=null;S.running=false;S.resting=false;document.getElementById('tCont').classList.remove('pulsing');if(S.idx<S.exercises.length-1){S.idx++;loadEx(S.idx);}else showDone();}
+function prevEx(){clearInterval(tInt);tInt=null;S.running=false;S.resting=false;document.getElementById('tCont').classList.remove('pulsing');if(S.idx>0){S.idx--;loadEx(S.idx);}}
+function updNav(){document.getElementById('prevBtn').style.opacity=S.idx===0?'0.3':'1';document.getElementById('skipBtn').textContent=S.idx===S.exercises.length-1?'Finish':'Skip →';}
+function toggleInfo(){iOpen=!iOpen;document.getElementById('xCue').classList.toggle('show',iOpen);document.getElementById('iBtn').classList.toggle('on',iOpen);}
+function showDone(){
+  S.done=true;document.getElementById('exCard').style.display='none';document.getElementById('gCtrls').style.display='none';
+  const total=Math.round(S.exercises.reduce((a,e)=>a+e.dur,0)/60);
+  document.getElementById('dSub').textContent=S.exercises.length+' exercises · ~'+total+' minutes · '+cLabel(S.cat)+(typeof S.tier==='string'&&S.tier!==S.cat?', '+cap(S.tier):'')+ '.';
+  document.getElementById('doneCard').classList.add('show');
+  S.exercises.forEach((_,i)=>{const p=document.getElementById('p'+i);if(p)p.className='pip done';});
+  playChime();
+}
+function repeatWorkout(){startSess(S.exercises,S.cat,S.tier);}
+function getEx(cat,tier){return(WK[cat]||{})[tier]||[];}
+
+const WK={
+ballet:{
+easy:[
+{name:"Posture Reset",dur:30,cue:"Ribs over pelvis, shoulders down, soft knees. Find the tripod of the foot.",setup:"Stand tall. Imagine a thread pulling the crown of your head upward. Ribcage settles over hips, not forward of them.",feel:"Lengthened spine without tension. Weight even across heel, base of big toe, base of little toe.",watch:null},
+{name:"Gentle Knee Bends",dur:60,cue:"Quarter depth. Heels stay down, knees track over toes. Smooth and controlled.",setup:"Stand parallel or first. Initiate the bend from hips and knees simultaneously. Torso stays upright throughout.",feel:"Gentle opening in the hip crease. Thighs working to control the descent.",watch:"Heels lifting or knees collapsing inward."},
+{name:"Demi-Pliés",dur:90,cue:"Parallel then first. Smooth descent and rise. Equal pressure through the whole foot.",setup:"Begin parallel, open to first after 4–5 reps. Initiate with the hips. Rise smoothly without locking the knees.",feel:"Inner thighs engaging in first. Heels pressing into the floor throughout.",watch:"Weight shifting to heels or arches rolling inward."},
+{name:"Tendus",dur:120,cue:"Front, side, back. Brush through the floor. Heel leads front, toe leads back. Return with control.",setup:"Brush working foot along floor until fully pointed. Heel leaves last going forward, arrives last coming back. Supporting hip stays stable.",feel:"Floor resistance in the brush. Full extension through all five toes at the end.",watch:"Foot sickling or supporting hip shifting on the working side."},
+{name:"Port de Bras — Simple",dur:60,cue:"Slow arm arc from low fifth through first to second and back. Coordinate with breath. Shoulders stay down.",setup:"Arms in low fifth (rounded in front of hips). Float up through first (chest height), open to second (side). Return. One full arc per breath.",feel:"Widening through the collarbones as arms open. No tension through neck or shoulders.",watch:"Shoulders rising toward ears or elbows locking straight."},
+{name:"Balance — Coupé or Low Passé",dur:90,cue:"45 sec each side. Light support fine. Find stillness first. Switch at halfway.",setup:"Place working foot in coupé or low passé. Find balance with support, then attempt freestanding. Reset cleanly. 45 sec each side.",feel:"Weight stacking over the ball of the supporting foot. Working leg feeling light.",watch:"Gripping the floor with toes or sickling the supporting ankle."},
+],
+moderate:[
+{name:"Posture Reset",dur:30,cue:"Ribs over pelvis, shoulders down. Refresh before beginning.",setup:"Three slow breaths. Let the body settle into alignment.",feel:"Calm and ready.",watch:null},
+{name:"Demi-Pliés with Heel Rise",dur:60,cue:"Rise to relevé after straightening — not during the plié. Steady ankles on the way up.",setup:"Plié, straighten fully, then rise to relevé before lowering. Three distinct phases: down, up, rise.",feel:"Calf engagement at the top. The heel rise should feel earned, not rushed.",watch:"Ankles wobbling or rolling on the relevé."},
+{name:"Demi-Pliés with Full Relevé",dur:120,cue:"Full relevé at top. Ankles aligned — no sickling. Lower with control.",setup:"Rise fully onto balls of both feet. Hold briefly at top before lowering. Both heels touch simultaneously on descent.",feel:"Full height through the ankles. Metatarsal heads pressing evenly into the floor.",watch:"Rushing the descent or losing ankle alignment at the top."},
+{name:"Dégagés",dur:150,cue:"Faster brush, controlled return. Turnout maintained on supporting leg. Working foot fully pointed.",setup:"From fifth or first. Brush out sharply, hold pointed position for a beat, return with control.",feel:"The snap of the brush. Full extension through all five toes.",watch:"Supporting hip shifting or working foot not fully articulated."},
+{name:"Port de Bras — With Plié",dur:90,cue:"Coordinate arm arc with slow demi-plié. Arms open as you descend, close as you rise.",setup:"Begin first, arms in first. Sink into plié while floating arms to second. Arms return to first as you rise. One full breath per plié.",feel:"Arms and legs moving as one connected phrase.",watch:"Shoulders rising or arms leading instead of following the breath."},
+{name:"Passé Balance",dur:120,cue:"60 sec each side. Flat or relevé. Find position first, then hold. Switch at halfway.",setup:"Lift working knee to passé height, hip not hiking. Attempt freestanding. 60 sec each side.",feel:"Working knee opening to the side, not pulling forward.",watch:"Passé knee dropping forward or supporting ankle rolling inward."},
+],
+difficult:[
+{name:"Posture Reset",dur:30,cue:"Ribs over pelvis. Refresh before demanding work.",setup:"Take your time. Don't rush into the hard work.",feel:"Grounded and prepared.",watch:null},
+{name:"Relevé Pulses",dur:60,cue:"Parallel. Small range — stay high. Stable ankles throughout.",setup:"Rise to full relevé and stay. Small pulses — only lower an inch before returning.",feel:"Sustained calf fatigue. Ankles solid, not wobbling.",watch:"Ankles rolling outward or losing height between pulses."},
+{name:"Pliés in First on Relevé",dur:120,cue:"Heels stay lifted through the full plié and rise. Small plié fine. Control is the goal.",setup:"Rise to relevé in first. Keeping heels lifted, sink into a small plié. Rise back to straight. Heels never touch the floor.",feel:"Intense calf and ankle engagement.",watch:"Heels dropping in the plié or on the way down."},
+{name:"Slow Rond de Jambe",dur:150,cue:"75 sec each side. From hip. Pelvis completely quiet. Switch at halfway.",setup:"Working leg extends front. Trace slow arc through side to back en dehors, then switch sides. Smaller and slower requires more control.",feel:"Supporting hip working hard to stay still. Working leg floating.",watch:"Hip or pelvis moving with the working leg."},
+{name:"Port de Bras — Full",dur:90,cue:"Full arc forward and back. Coordinate with breath. Head follows the arms.",setup:"Arms travel from low fifth, through first, overhead in fifth, to second with slight back lean, then forward into gentle cambré, recover upright.",feel:"Whole torso involved in the phrase. Long through the back of the neck.",watch:"Collapsing in the lower back on the back bend or neck jutting forward."},
+{name:"Sustained Balance — No Support",dur:120,cue:"60 sec each side. Reset when needed. Each clean hold is the goal. Switch at halfway.",setup:"Any balance: coupé, passé, or arabesque line. Attempt freestanding. 60 sec each side.",feel:"Micro-adjustments through the standing ankle and foot. Stacking rather than gripping.",watch:"Gripping the floor or compensating with the upper body."},
+]},
+body:{
+easy:[
+{name:"Posture Reset",dur:30,cue:"Stand tall. Light brace. Ribs over pelvis, soft knees.",setup:"A moment of stillness before movement.",feel:"Grounded and ready.",watch:null},
+{name:"March",dur:60,cue:"Lift knees to comfortable height. Torso upright. Steady rhythm.",setup:"Lift alternate knees in a controlled march. Arms swing naturally. Spine tall throughout.",feel:"Hip flexors working with each lift. Even rhythm.",watch:"Leaning back or losing posture as you fatigue."},
+{name:"Sit-to-Stand Squats",dur:120,cue:"Hips back to lower, stand tall at top. Chair if needed. Glutes engage at the top.",setup:"Begin seated or hovering. Hinge forward from hips, push through heels to stand. Squeeze glutes at top.",feel:"Glutes and quads working on the rise. Heels pressing into the floor.",watch:"Knees caving inward or heels lifting."},
+{name:"Wall Push-Ups",dur:120,cue:"Body in one straight line. Elbows roughly 45°. Controlled both ways.",setup:"Hands on wall at chest height, slightly wider than shoulders. Step back to feel load. Full body rigid.",feel:"Chest and shoulder engagement on the way down. Core maintaining the plank.",watch:"Hips sagging or pushing forward."},
+{name:"Standing Hip Extensions",dur:120,cue:"60 sec each side. Squeeze glute at top. Avoid arching the low back. Switch at halfway.",setup:"Facing wall, light fingertip support. Extend one leg back from hip, squeezing glute at top. Keep pelvis from tilting. 60 sec each side.",feel:"Glute of the working leg firing at full extension. Pelvis level.",watch:"Lower back arching to get more range."},
+{name:"Calf Raises",dur:120,cue:"Both feet. Rise straight up. Don't roll ankles out. Lower with control.",setup:"Feet hip-width. Rise to balls of both feet. Hold briefly at top, lower slowly.",feel:"Even pressure across both feet. Calf fatigue building.",watch:"Rolling to outer foot or bouncing at the bottom."},
+],
+moderate:[
+{name:"Posture Reset",dur:30,cue:"Refresh alignment. Light brace.",setup:"Quick check before harder work.",feel:"Ready to move.",watch:null},
+{name:"March + Knee Hold",dur:60,cue:"Lift knee, pause briefly before lowering. Balance on standing leg during the pause.",setup:"March as before, but pause for 2 counts at knee height. Find stability on the standing leg.",feel:"Standing hip stabilizers working during the hold.",watch:"Torso shifting to compensate during the hold."},
+{name:"Tempo Squats",dur:120,cue:"3-count descent, normal speed up. Hips back. Brief pause at bottom if form holds.",setup:"Inhale for 3 counts as you lower, exhale to rise. Slow descent is the work.",feel:"Quads under sustained load on the way down.",watch:"Knees tracking past toes without a hip hinge."},
+{name:"Incline Push-Ups",dur:120,cue:"Hands on elevated surface. Controlled pace. Body plank-straight throughout.",setup:"Hands on stable surface (chair seat, countertop). Lower to 2-count, press back up. Full body rigid.",feel:"More chest load than wall push-ups. Core engaged throughout.",watch:"Hips rising or sagging as you fatigue."},
+{name:"Hip Extension + Pulses",dur:120,cue:"60 sec each side. Reach full extension, two small pulses, lower. Switch at halfway.",setup:"Same as Easy hip extensions, but add 2 small upward pulses after reaching full extension. 60 sec each side.",feel:"Glute fatigue building in the pulses.",watch:"Pulsing from the low back rather than the glute."},
+{name:"Single-Leg Calf Raises",dur:150,cue:"75 sec each side. Light fingertip support ok. Keep movement vertical. Switch at halfway.",setup:"Lift one foot and perform calf raises on the other. Small range fine. Stop before ankle instability. 75 sec each side.",feel:"Significantly more load than bilateral. Ankle stability working hard.",watch:"Rolling to outer foot or ankle wobbling."}
+],
+difficult:[
+{name:"Posture Reset",dur:30,cue:"Ribs over pelvis. Prepare before harder work.",setup:"Slow breath in and out. Full reset.",feel:"Grounded and ready for challenge.",watch:null},
+{name:"March → Passé",dur:60,cue:"Lift knee, transition to passé, lower smoothly. Alternate. Upright torso throughout.",setup:"Lift knee to hip height then open to passé before lowering. Smooth controlled transition — not a kick.",feel:"Hip external rotators engaging in the passé. Balance challenge on standing leg.",watch:"Torso tipping or rushing the transition."},
+{name:"Squats with 2-sec Bottom Pause",dur:120,cue:"Shallow fine. Pause at bottom with control. Rise with power.",setup:"Lower to comfortable depth, pause 2 counts with tension, then drive up. The pause eliminates momentum.",feel:"Quads loaded in the pause. Controlled tension at the bottom.",watch:"Knees caving or weight shifting to toes at the bottom."},
+{name:"Slow-Tempo Incline Push-Ups",dur:120,cue:"4-count descent. Normal speed up. Full alignment maintained.",setup:"Same incline setup as Moderate. Lower for 4 full counts, press back up normally.",feel:"Chest and triceps under sustained eccentric load on the way down.",watch:"Elbows flaring wide or hips shifting."},
+{name:"Single-Leg Balance Squat",dur:120,cue:"60 sec each side. Very shallow. Assisted fine. Switch at halfway.",setup:"Lift one foot slightly or hold in low coupé. Very small knee bend on standing leg. Fingertip wall support completely acceptable. 60 sec each side.",feel:"Glute med and standing ankle working hard to stabilize.",watch:"Knee caving inward or pelvis dropping on the lifted side."},
+{name:"Hip Extension Holds",dur:150,cue:"75 sec each side. Hold extension for 5 sec. Rest briefly. Repeat. Switch at halfway.",setup:"Hold the full extension for a slow 5-count. Lower, rest 2 counts, repeat. 75 sec each side.",feel:"Deep glute fatigue in the hold. Effort in the glute, not the lower back.",watch:"Lower back arching or pelvis tilting."}
+]},
+skate:{
+easy:[
+{name:"Posture Check",dur:30,cue:"Slight forward lean from ankle, soft knees, upright back. Skating posture.",setup:"Find your on-ice stance off-ice. Ankles slightly flexed forward, knees soft, hips over feet, back long.",feel:"Ready to move, not stiff. Weight slightly forward.",watch:null},
+{name:"Side-to-Side Weight Shifts",dur:60,cue:"Full weight transfer onto each foot. Pause fully on each side.",setup:"Slowly shift weight from one foot to the other. Complete arrival before transferring. No bouncing.",feel:"Complete weight on one foot at the pause. Hip stabilizers working.",watch:"Partial transfers — fully arrive on each foot."},
+{name:"Edge Walk in Place",dur:60,cue:"Shift to inside edge, then outside edge. Feel the difference. Both feet.",setup:"Stand parallel. Rock onto inside edge of right foot (arch side), then outside (little toe side). Alternate feet.",feel:"The difference in stability between inside and outside edge.",watch:"Ankle collapsing rather than controlled edge pressure."},
+{name:"Landing Position Hold",dur:90,cue:"45 sec each side. Find your landing check position and hold. Switch at halfway.",setup:"Step onto one foot in landing position — slight knee bend, checked arms, free leg extended behind. Hold and find stillness. 45 sec each side.",feel:"Balance over the ball of the foot. Check arms providing stability.",watch:"Weight too far back on the heel or knee locking straight."},
+{name:"Side Leg Lifts",dur:60,cue:"30 sec each side. Torso upright — do not hinge. Lift from the hip. Switch at halfway.",setup:"Standing tall, lift one leg to the side. Torso stays completely vertical. Hold briefly at top. 30 sec each side.",feel:"Hip abductor working. No strain in the lower back.",watch:"Torso leaning away from the lifted leg."},
+{name:"Spiral Hold",dur:90,cue:"45 sec each side. Find your spiral position and hold. Switch at halfway.",setup:"Hinge forward from hip with flat back, extend one leg behind. Lifted leg as high as comfortable without hip opening or back arching. 45 sec each side.",feel:"Hamstring of lifted leg working. Standing hip stabilizer engaged.",watch:"Hip of lifted leg rotating open or back arching to compensate."}
+],
+moderate:[
+{name:"Posture Check",dur:30,cue:"Skating posture. Forward lean from ankle, soft knees.",setup:"Quick skater stance reset.",feel:"Athletic and ready.",watch:null},
+{name:"Arm-Driven Rotation Prep",dur:60,cue:"Arms lead the rotation. Practice the pull-in without jumping.",setup:"Stand with arms extended. Initiate rotation by pulling arms in. Feel rotation accelerate with the pull. Practice timing without leaving the ground.",feel:"Rotation accelerating as arms pull in.",watch:"Arms pulling in too early before rotation is initiated."},
+{name:"Quarter-Turn Jumps",dur:90,cue:"Rotate a quarter turn each jump. Consistent check position on landing.",setup:"Small jump from two feet, rotating a quarter turn. Land in balanced position, check arms, absorb through the knee.",feel:"Rotation completing before landing. Soft knee absorption.",watch:"Over-rotating past quarter or landing without a check."},
+{name:"Half-Turn Jumps with Check Hold",dur:90,cue:"Half turn, land and hold the check for 3 full seconds.",setup:"Half rotation jump. After landing, hold check position completely still for a 3-count.",feel:"The landing check holding firm. Free leg extending behind.",watch:"Check collapsing before 3 seconds or hopping on landing."},
+{name:"Single-Rotation Jumps",dur:120,cue:"Full rotation. Clean check on landing. Control over height.",setup:"Full single rotation from two feet. Focus on clean pickup and clean check.",feel:"Full rotation completing in the air. Check snapping into place.",watch:"Under-rotating or landing without a check."},
+{name:"Spiral with Pulse",dur:90,cue:"45 sec each side. Find the position, 3 pulses upward, then hold. Switch at halfway.",setup:"Establish spiral line. Add 3 small controlled pulses (lifts of back leg), then settle into sustained hold. 45 sec each side.",feel:"Hip extensor working in the pulses. Hold feeling stable after pulses.",watch:"Losing the flat back position during the pulses."}
+],
+difficult:[
+{name:"Posture Check",dur:30,cue:"Refresh skating posture before harder work.",setup:"Full reset. Start grounded.",feel:"Sharp and ready.",watch:null},
+{name:"Continuous Quarter Jumps",dur:60,cue:"Multiple quarter turns in sequence. No pause between. Steady rhythm.",setup:"String quarter-turn jumps together continuously — 4, 6, or 8 in a row. Consistent height and check through the sequence.",feel:"Rhythm building. Legs finding the timing automatically.",watch:"Losing height as the sequence continues or checks degrading."},
+{name:"Quarter → Half Jump Combos",dur:120,cue:"Quarter turn, then half turn in sequence. Consistent check between each.",setup:"One quarter-turn jump, land and check, then immediately a half-turn jump, land and check. The check between must be clean.",feel:"Contrast in rotation between the two. Check acting as a reset.",watch:"Skipping the check between jumps or rushing."},
+{name:"Single Jumps with 5-sec Landing Hold",dur:120,cue:"Land and hold for 5 full seconds. Reset only after the hold.",setup:"Full single rotation, land cleanly, hold check position for a complete 5-count.",feel:"The hold testing real landing stability. Free leg and arms locked in check.",watch:"Stepping out before 5 seconds or landing without a real check."},
+{name:"Spin Entry Drill",dur:90,cue:"45 sec each spinning foot. Entry and centering only. Switch at halfway.",setup:"Step into spin setup position, transfer weight to spinning foot, find center. Hold entry position for 3 counts before stepping out. Repeat. 45 sec each side.",feel:"Weight centering over the ball of the spinning foot. Free side pulling in cleanly.",watch:"Leaning back on the heel or pulling in too early."},
+{name:"Long Spiral Hold",dur:120,cue:"60 sec each side. Find your best line and stay there. Switch at halfway.",setup:"Full spiral position, best height you can hold with good form. Maintain form throughout. 60 sec each side.",feel:"Hip stabilizer and back working together. Breathing through the hold.",watch:"Form degrading significantly before time is up."}
+]},
+foot:{
+easy:[
+{name:"Posture Reset",dur:30,cue:"Weight on tripod: heel, base of big toe, base of little toe. Stand tall.",setup:"Barefoot or socks. Consciously feel all three tripod points. Equal pressure through each.",feel:"Whole foot in contact with the floor. Not rolled in or out.",watch:null},
+{name:"Slow Articulated Point",dur:60,cue:"30 sec each side. Point slowly through demi-pointe, toes spread as long as possible. Switch at halfway.",setup:"Seated or standing. Point slowly — press through ball of foot first, then toes extend. Keep toes spreading. Return same way. 30 sec each side.",feel:"The articulation sequence through the foot. Metatarsal heads pressing down before toes follow.",watch:"Toes gripping early. Right foot — watch for 2nd–3rd toes coupling as a unit."},
+{name:"Seated Toe Spreading",dur:60,cue:"Spread toes wide without curling. Hold briefly. Full release between reps.",setup:"Seated, foot flat. Spread all five toes as wide as possible without curling them under. Hold 2 counts, release fully.",feel:"Broad sensation across forefoot.",watch:"Toes curling down instead of spreading wide."},
+{name:"Big Toe / Little Toe Lifts",dur:60,cue:"30 sec each foot. Keep ankle still. Lift big toe alone, then little toes. Switch at halfway.",setup:"Seated. Without moving the ankle, lift only the big toe while others stay down, then lift toes 2–5 while big toe stays down. 30 sec each foot.",feel:"Novel sensation of isolated toe control. Expect difficulty and asymmetry.",watch:"Ankle moving to compensate."},
+{name:"Seated Short-Foot",dur:60,cue:"Draw ball of foot toward heel to lift arch. No toe curl. Toes long and relaxed.",setup:"Seated, foot flat. Gently contract the arch by drawing ball of foot toward heel — doming from underneath. Toes completely relaxed.",feel:"Subtle lift under the arch.",watch:"Toes clawing or curling. Reduce effort and try again."},
+{name:"Weight Shifts + Calf Raises",dur:90,cue:"Shift weight forward/back/side then rise onto both balls of feet. Tripod throughout.",setup:"Shift weight slowly across foot in all directions maintaining tripod contact, then transition into double-leg calf raises. Rise straight up, lower with control.",feel:"Arch responding to the shifts. Even pressure across both metatarsal heads in the raise.",watch:"Arch collapsing on forward shift or rolling to outer foot in the raise."},
+],
+moderate:[
+{name:"Posture Reset",dur:30,cue:"Re-find tripod. Ribs over pelvis.",setup:"Quick reset before load work.",feel:"Grounded.",watch:null},
+{name:"Independent Toe Control",dur:60,cue:"30 sec each foot. Tap toes sequentially outside to inside and back. Switch at halfway.",setup:"Seated or standing. Attempt to tap toes from little toe to big toe in sequence, then reverse. Ankle stays completely still. 30 sec each foot.",feel:"The effort of isolation. Right foot harder — asymmetry is expected.",watch:"Rocking ankle or foot to simulate toe movement."},
+{name:"Short-Foot Holds",dur:60,cue:"Hold 5–6 sec. Full release between reps. Standing and seated.",setup:"Seated short-foot holds first, then standing. Hold arch dome for 5–6 seconds, fully release.",feel:"Arch lifting from beneath. Toes uninvolved.",watch:"Toes clawing or no full release between reps."},
+{name:"Towel Crunch — Arch Dome",dur:60,cue:"30 sec each foot. Draw arch up without curling toes. Switch at halfway.",setup:"Seated, foot on floor or towel. Draw ball of foot toward heel — toes remain completely long and relaxed. 30 sec each foot.",feel:"Effort localized under the arch, not in the toes.",watch:"Toe curling means long flexors have taken over. Reduce effort and reset."},
+{name:"Eccentric Calf Raises + Flexor Hallucis",dur:90,cue:"Rise on both feet, lower slowly (4 sec). Keep weight over first and second met heads on the rise.",setup:"Rise normally on both feet, lower for 4 full counts. As you rise, consciously keep big toe pressing into the floor. Wall contact for balance fine.",feel:"Slow descent burning in the calf. Big toe pressing actively into the floor.",watch:"Rolling to outer foot at top or rushing the 4-count descent."},
+{name:"Soleus Calf Raise",dur:60,cue:"Knees stay bent throughout. Rise and lower from this position. Isolates the soleus.",setup:"Stand parallel, sink into shallow knee bend and hold it. From this position, rise onto balls of both feet and lower.",feel:"A different quality of calf work — deeper and more localized. Your skating ankle stability muscle.",watch:"Knees straightening during the raise."},
+],
+difficult:[
+{name:"Posture Reset",dur:30,cue:"Tripod + soft knee. Prepare before harder work.",setup:"Full reset. Foot work is demanding — arrive focused.",feel:"Grounded and ready.",watch:null},
+{name:"Standing Short-Foot Holds",dur:45,cue:"Hold 8–10 sec. Full release between reps.",setup:"Standing, short-foot holds for 8–10 seconds each with complete release between. Both feet.",feel:"Arch working hard to sustain the dome under body weight.",watch:"Toes compensating or no full release between reps."},
+{name:"Single-Leg Calf Raises",dur:60,cue:"Small range fine. Stop before form changes.",setup:"Single leg, full calf raise. Fingertip support ok. Stop the set before form degrades.",feel:"Significantly more load than bilateral. Ankle stabilizers working hard.",watch:"Ankle rolling or form breaking down."},
+{name:"Anterior Tibialis Wall Lean",dur:45,cue:"Back against wall, heels 6–8 inches out, body straight. Flex feet toward ceiling and lower.",setup:"Stand with back flat against wall. Walk heels 6–8 inches away. Keep hips against wall. Lift toes and forefoot toward ceiling, hold briefly, lower.",feel:"Front of the shin working. Counterbalance to all plantarflexion work.",watch:"Hips drifting away from the wall."},
+{name:"Single-Foot Balance + Arm Sweep",dur:90,cue:"45 sec each side. Standing foot completely still while arms sweep. Switch at halfway.",setup:"Balance on one foot with arch active. Slowly sweep both arms. Foot must not respond to the arm movement at all. 45 sec each side.",feel:"Micro-adjustments in the standing foot and ankle. Foot working silently while arms move.",watch:"Foot gripping or shifting in response to arm movement."},
+{name:"Toe Lift Isometrics + Spread Reset",dur:60,cue:"Lift toes lightly, hold. Keep shin relaxed. End with full toe spread and relax.",setup:"Lift all toes gently and hold for 5 counts. Lower. Repeat. Shin muscle relaxed — intrinsic foot muscles doing the work. Finish with full toe spread and complete relaxation.",feel:"Subtle effort under the foot, not in the shin.",watch:"Shin muscle engaging instead of intrinsic foot muscles."},
+]},
+pointe:{
+easy:[
+{name:"Two-Leg Élevés at Barre",dur:90,cue:"20 reps. Both feet. Full height — heels clear the floor. No rolling to outer foot.",setup:"Stand in parallel with feet together at the barre. Both hands on barre. Rise to full height on both feet simultaneously and lower. Focus on even weight distribution and full range.",feel:"Both calves working equally. Full height at the top with heels clearly off the floor.",watch:"Rolling to outer foot or not achieving full height."},
+{name:"Passé Balance with Support",dur:90,cue:"45 sec each side (includes attempts and resets). One hand on barre. Switch at halfway.",setup:"Standing turned-out passé. One hand on barre. Find your balance point and hold. Working knee should open to the side, not pull forward. 45 sec each side.",feel:"Standing hip stabilizer working. Working knee pointing to the side.",watch:"Working knee dropping forward or supporting ankle rolling."},
+{name:"Shallow Airplane Position",dur:90,cue:"45 sec each side. Flat-back arabesque hold, no pliés. Switch at halfway.",setup:"Stand parallel. Hinge forward from hips with flat back until torso is roughly parallel to floor. Arms in second. Hold and repeat for 45 sec each side.",feel:"Hamstrings working to maintain the hinge. Back flat — not rounded.",watch:"Rounding the spine or losing hip square position."},
+{name:"Lunge Stretch Hold",dur:90,cue:"45 sec each side. Low lunge, front foot flat, back knee down. Switch at halfway.",setup:"Step into low lunge. Back knee on floor, front foot flat. Sink hips forward and down. Hold for 45 sec, switch sides.",feel:"A stretch in the front of the back hip and thigh.",watch:"Front knee far past toes or collapsing inward."},
+{name:"Parallel Jumps — Two Feet",dur:60,cue:"8 reps. Straighten stance knee in air. Point foot at height. Quiet landings.",setup:"Stand parallel. Jump from two feet, straightening legs fully and pointing both feet at height. Land quietly through toe-ball-heel.",feel:"Full extension in the air. Soft controlled landing.",watch:"Not achieving full extension or landing flat-footed."},
+],
+moderate:[
+{name:"Single-Leg Élevés — One Hand Barre",dur:90,cue:"Complete reps on right, then switch to left. One hand only. Full height maintained.",setup:"Stand in parallel coupé, one hand on barre. Complete as many reps as possible on right foot, then immediately switch to left. Goal is 20 each side.",feel:"Calf fatigue building. Height consistent rep to rep.",watch:"Height dropping in later reps or rolling to outer foot."},
+{name:"Passé Balance — Unsupported",dur:90,cue:"45 sec each side (20 sec holds with resets). Switch at halfway.",setup:"Standing passé, no support. Attempt to hold for 20 seconds. Step down cleanly and reset when wobbling. 45 sec each side.",feel:"Standing ankle making constant micro-adjustments.",watch:"Hopping to maintain balance or working knee pulling forward."},
+{name:"Airplane with 3 Pliés",dur:90,cue:"45 sec each side — 3 pliés at 4 seconds each. Switch at halfway.",setup:"Establish airplane position on right leg. Perform 3 slow demi-pliés, 4 counts each. Switch to left side and repeat.",feel:"Core and back working hard through all 3 pliés.",watch:"Spine rounding or hips rotating during the plié."},
+{name:"Single-Leg Sautés — Arms Free",dur:90,cue:"8 reps right, then 8 reps left. Arms uncrossed. Full point at height.",setup:"Lift one leg to detached coupé. Jump 8 times on standing leg, full extension and point at top. Complete all 8 on right, then switch to left.",feel:"Standing leg working hard through each landing. Full extension at the top.",watch:"Not achieving full height, hiking the pelvis, or leg alignment breaking down."},
+{name:"Lunge Test — Mobility Drill",dur:90,cue:"45 sec each side. Knee toward wall, heel down. Note asymmetry. Switch at halfway.",setup:"Face a wall. Front foot a few inches from baseboard. Lunge knee forward keeping heel on floor. Note how close your knee gets. 45 sec each side, noting whether both sides feel equal.",feel:"Stretch through calf and ankle. Difference between sides is informative.",watch:"Heel lifting or knee caving inward."}
+],
+difficult:[
+{name:"Single-Leg Passé Balance — 30 sec",dur:90,cue:"30 sec right side, then 30 sec left side. Unsupported. Full assessment standard.",setup:"Standing passé, no support. Hold for 30 continuous seconds without touching down. Complete right side fully before switching to left.",feel:"Deep concentration and constant micro-adjustment.",watch:"Touching down before 30 seconds or working knee dropping forward."},
+{name:"Single-Leg Élevés — 20 Reps",dur:90,cue:"20 reps right, then 20 reps left. One hand on barre. Full height throughout.",setup:"One hand on barre. Complete 20 reps on right foot, then immediately switch to left. Full height maintained throughout — note where it drops.",feel:"Calf fatigue building. True full height on all 20.",watch:"Height dropping in reps 15–20 or rolling to outer foot."},
+{name:"Airplane Test — Full 5 Pliés",dur:120,cue:"5 pliés right side, then 5 pliés left side. 4 seconds each. Full assessment criteria.",setup:"Airplane position on right leg (parallel, flat-back, arms in second, gaze at floor). Perform 5 slow demi-pliés, 4 counts each. Switch to left side and repeat. Criteria: no turnout, spine neutral, shoulders and hips square, no loss of balance.",feel:"Core and back working continuously through all 5 pliés.",watch:"Turnout creeping in, spine rounding, hips rotating, or losing balance."},
+{name:"Single-Leg Sautés — Arms Crossed",dur:90,cue:"8 reps right, then 8 reps left. Arms crossed on shoulders throughout.",setup:"Arms crossed on opposite shoulders — they stay there. Complete 8 sautés on right foot, then switch to left. Straighten stance knee fully in air. Point foot completely at height.",feel:"Without arms for balance, core and standing leg work significantly harder.",watch:"Arms unfolding, not achieving maximal height, hiking the pelvis."},
+{name:"Single Pirouette",dur:90,cue:"Clean single rotation both directions. Land in coupé or passé.",setup:"Prepare in fourth or fifth. Execute single pirouette, spotting clearly. Land in controlled coupé or passé. Attempt both directions.",feel:"Spot arriving cleanly. Landing checking solidly without a hop.",watch:"Over-rotating past single, hopping on landing, or losing the spot."},
+{name:"Lunge Test — Full Criteria",dur:90,cue:"45 sec each side. Knee to wall, heel down. Note distance and compare. Less than 2cm difference is passing.",setup:"Face wall, front foot close to baseboard. Right side first: lunge knee toward wall keeping heel completely flat. Note the maximum distance where big toe can be while knee still touches wall. Switch sides. Compare.",feel:"Calf and ankle flexibility assessed. Note any significant asymmetry.",watch:"Heel lifting to achieve contact or knee caving inward."}
+]}
+};
+
+function getSEx(m){return ST[m]||[];}
+const ST={
+5:[
+{name:"Standing Hip Flexor Lunge",dur:60,cue:"30 sec each side. Front foot flat, back knee down. Sink into the hip. Upright torso. Switch at halfway.",setup:"Step one foot forward. Back knee rests on floor or hovers. Gently tuck the tailbone to deepen the stretch. Hold still for 30 sec, then switch sides.",feel:"A stretch in the front of the back hip and top of the thigh. Psoas and iliopsoas — chronically shortened by sitting.",watch:"Arching the lower back instead of tucking the pelvis."},
+{name:"Standing Psoas Release",dur:60,cue:"30 sec each side. Deep lunge, posterior pelvic tilt held. Most important stretch for skating arabesque. Switch at halfway.",setup:"Low lunge. Once settled, gently tuck the tailbone and hold that position for 30 sec. Switch sides. Targets the deep psoas specifically.",feel:"A deep pull in the front of the back hip, sometimes reaching into the lower abdomen.",watch:"Losing the pelvic tuck — the stretch becomes superficial without it."},
+{name:"Straight-Leg Calf Stretch",dur:60,cue:"30 sec each side. Heel down, toes up the wall. Full stretch through gastrocnemius. Switch at halfway.",setup:"Stand facing wall. One foot forward, toes up the wall, heel on floor. Press ball of foot gently into wall with knee straight for 30 sec. Switch.",feel:"Stretch through the entire back of the lower leg.",watch:"Knee bending — keep it straight to target the gastrocnemius."},
+{name:"Thoracic Rotation",dur:60,cue:"30 sec each side. Rotate from mid-back, not lower back. Switch at halfway.",setup:"Seated in chair, arms crossed over chest. Rotate upper body to one side, initiating from the mid-back. Hold 30 sec. Lower back and hips stay still. Switch.",feel:"Rotation in the middle of the spine. Thoracic spine unlocking.",watch:"Rotating from the lower back or hips."},
+{name:"Plantar Fascia Stretch",dur:60,cue:"30 sec each side. Toes up against wall or floor, gentle pressure. Easy on the right foot. Switch at halfway.",setup:"Standing, place one foot with toes up against wall and heel on floor. Gently lean into the stretch for 30 sec. Right foot needs less pressure — honor that. Switch.",feel:"A stretch along the sole from heel to toes.",watch:"Forcing the range on the right foot."},
+],
+10:[
+{name:"Standing Hip Flexor Lunge",dur:60,cue:"30 sec each side. Front foot flat, back knee down. Sink into the hip. Switch at halfway.",setup:"As in the 5-min version. 30 seconds each side.",feel:"Deep pull in the front of the back hip.",watch:"Arching the lower back."},
+{name:"Standing Psoas Release",dur:60,cue:"30 sec each side. Deep lunge, posterior pelvic tilt held. Switch at halfway.",setup:"Same as 5-min version. Tuck tailbone and hold 30 sec, then switch.",feel:"Deep front-of-hip pull.",watch:"Losing the pelvic tuck."},
+{name:"Standing Hamstring Stretch",dur:60,cue:"30 sec each side. Flat back hinge. Spine long. Switch at halfway.",setup:"Place one heel forward on a low surface or straighten the front leg with a slight hinge. Keep the spine long. Hold 30 sec, switch.",feel:"Behind the knee and up the back of the thigh.",watch:"Spinal rounding."},
+{name:"Straight + Bent-Knee Calf",dur:120,cue:"30 sec straight leg each side, then 30 sec bent knee each side. Switch at halfway through each.",setup:"Right leg: straight-leg calf 30 sec, then bend the knee 30 sec without standing. Switch to left leg and repeat.",feel:"Two distinct stretch locations. Gastrocnemius then soleus.",watch:"Rushing between positions."},
+{name:"Thoracic Rotation",dur:60,cue:"30 sec each side. Seated. Rotate from mid-back. Switch at halfway.",setup:"As in the 5-min version. 30 seconds each side.",feel:"Mid-spine unlocking.",watch:"Rotating from the hips."},
+{name:"Supine Glute — Figure Four",dur:120,cue:"60 sec each side. Ankle over opposite knee. Gentle pull toward chest. Switch at halfway.",setup:"Lie on back. Cross one ankle over opposite knee in a figure-four shape. Hold shin or thread hands through to hold back thigh and gently draw toward chest. 60 sec each side.",feel:"Deep in the glute and outer hip. Targets piriformis — important for turnout quality.",watch:"Pulling so aggressively the lower back lifts off the floor."},
+{name:"Plantar Fascia Stretch",dur:60,cue:"30 sec each side. Toes up against wall or floor. Easy on the right foot. Switch at halfway.",setup:"As in the 5-min version. 30 seconds each side.",feel:"A stretch along the sole from heel to toes.",watch:"Forcing the range on the right foot."},
+{name:"Kneeling Toe Extension",dur:30,cue:"Both feet together, tops of toes on floor, sit back gently. Stretches toe flexors. Go easy.",setup:"Kneel with tops of both toes on floor simultaneously. Gently sit back toward heels.",feel:"A stretch along tops of toes and forefoot. Can be intense — go slowly.",watch:"Forcing the sit-back."},
+],
+15:[
+{name:"Standing Hip Flexor Lunge",dur:60,cue:"30 sec each side. Deep low lunge. Switch at halfway.",setup:"Same as previous versions. Warmup for the longer session. 30 seconds each side.",feel:"Hip flexors beginning to release.",watch:"Lower back arching."},
+{name:"Standing Psoas Release",dur:60,cue:"30 sec each side. Deep lunge, posterior tilt held. Switch at halfway.",setup:"As in previous versions. 30 seconds each side.",feel:"Deep front-of-hip release.",watch:"Losing the pelvic tuck."},
+{name:"Hamstring + Calf Sequence",dur:180,cue:"Right leg: hamstring 30 sec, straight calf 30 sec, bent calf 30 sec. Then left leg. Switch at halfway.",setup:"On right leg: flat-back hamstring hinge 30 sec, then straight calf against wall 30 sec, then bend the knee for soleus 30 sec. Switch to left leg and repeat the full sequence.",feel:"The whole posterior chain addressed sequentially.",watch:"Rushing — each position needs a full 30 seconds."},
+{name:"Thoracic Rotation",dur:60,cue:"30 sec each side. Seated, mid-back rotation. Switch at halfway.",setup:"As before. 30 seconds each side.",feel:"Mid-spine releasing.",watch:"Rotating from the lower back."},
+{name:"Supine Glute — Figure Four",dur:120,cue:"60 sec each side. Longer hold gets deep into the piriformis. Switch at halfway.",setup:"As in the 10-min version. Let the weight of the legs do the work — don't force. 60 seconds each side.",feel:"Glute and outer hip progressively releasing. Turnout quality improves with this.",watch:"Lower back lifting off the floor."},
+{name:"Supine Hamstring Stretch",dur:60,cue:"30 sec each side. Leg straight, strap or towel. Pelvis flat. Switch at halfway.",setup:"Lie on back. Loop strap or towel around one foot. Lift leg toward ceiling. Pelvis stays flat. 30 sec each side.",feel:"Back of the thigh releasing.",watch:"Pelvis lifting."},
+{name:"Supine Psoas Release",dur:180,cue:"90 sec each side. One leg extended, one knee hugged to chest. Passive release. Switch at halfway.",setup:"Lie on floor. Hug one knee to chest. Let other leg extend fully along floor. Hold completely still for 90 sec — this is a passive release, not an active stretch. Switch sides.",feel:"A deep release in the front of the extended leg's hip. More passive and deeper than standing versions.",watch:"Lower back arching away from floor on extended side.",passive:true},
+{name:"Butterfly / Cobbler Stretch",dur:30,cue:"Soles of feet together, knees open. Spine tall. Hip external rotators and inner thigh.",setup:"Seated, soles together, knees open out. Gently press knees toward floor with elbows or simply hold. Spine tall.",feel:"Inner thigh and hip external rotators opening. Directly serves turnout quality.",watch:"Rounding the lower back."},
+{name:"Kneeling Toe Extension",dur:30,cue:"Both feet together, tops of toes on floor, sit back gently. Foot should be warm before this.",setup:"Both toes on floor simultaneously. Foot is warm now — explore a slightly deeper hold if comfortable.",feel:"Forefoot and toe flexor release.",watch:"Forcing the range."},
+{name:"Hallux Mobilization",dur:60,cue:"30 sec each side. Gentle passive extension of the big toe. Do not do cold. Switch at halfway.",setup:"Seated, hold the big toe and gently move it into passive dorsiflexion (bending upward). Hold several counts and repeat for 30 sec. Foot must be warm first. Switch sides.",feel:"Gentle stretch along base of big toe and first metatarsal. Relevant to first MTP tracking and bunion management.",watch:"Forcing the range or any sharp pain. This should be gentle."},
+{name:"Supine Spinal Twist + Foot Release",dur:60,cue:"30 sec each side for the twist, then toe wiggle and full foot relax to finish. Switch at halfway.",setup:"Lie on back, draw knees to chest, drop both knees to one side. Arms wide, gaze to opposite side. Hold 30 sec, switch. Then: wiggle toes freely, spread and fully relax both feet.",feel:"Full thoracic and lumbar rotation. The foot release should feel like a genuine sigh of relief.",watch:"Shoulders lifting off the floor in the twist."},
+]};
+
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js').catch(()=>{});});}
+</script>
+</body>
+</html>
